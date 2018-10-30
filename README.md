@@ -7,7 +7,9 @@ This program is a basic implementation of a publisher and a subscriber in ROS. I
 
 ## Dependencies
 This program works on a device running Ubuntu 16.04 and ROS Kinetic.
+
 To install ROS Kinetic in Ubuntu 16.04, follow the steps in this [link](http://wiki.ros.org/kinetic/Installation/Ubuntu).
+
 To install catkin, follow the installation steps in this [link](http://wiki.ros.org/catkin).
 
 ## Build and Run Instructions
@@ -29,6 +31,7 @@ Note, that if you do not have a catkin workspace, then first make the catkin wor
 mkdir -p ~/catkin_ws/src
 ```
 Now, to run this code, three terminals are required.
+
 Set environment vairables and run roscore in Terminal 1:
 ```
 roscore
@@ -54,6 +57,7 @@ cmake ..
 make
 ```
 Now, to run this code, three terminals are required.
+
 Set environment vairables and run roscore in Terminal 1:
 ```
 roscore
@@ -82,4 +86,3 @@ To check Google C++ Style formatting in Terminal
 cd <path to directory>
 cpplint $(find . -name \*.cpp | grep -vE -e "^./build/" -e "^./results")
 ```
-
