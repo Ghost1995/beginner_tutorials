@@ -12,9 +12,8 @@ To install ROS Kinetic in Ubuntu 16.04, follow the steps in this [link](http://w
 
 To install catkin, follow the installation steps in this [link](http://wiki.ros.org/catkin).
 
-## Build and Run Instructions
-There are two ways to run this code.
-#### Method 1
+## Build Instructions
+
 To build this code in a catkin workspace:
 ```
 cd ~/catkin_ws/
@@ -30,7 +29,10 @@ Note, that if you do not have a catkin workspace, then first make the catkin wor
 ```
 mkdir -p ~/catkin_ws/src
 ```
-Now, to run this code, three terminals are required.
+
+## Run Instructions
+
+To run this code, three terminals are required.
 
 Set environment vairables and run roscore in Terminal 1:
 ```
@@ -45,32 +47,6 @@ Set environment variables and run subscriber (listener) node in Terminal 3:
 ```
 source ~/catkin_ws/devel/setup.bash
 rosrun beginner_tutorials listener
-```
-#### Method 2
-If you do not want to build this code in a catkin workspace:
-```
-git clone https://github.com/Ghost1995/beginner_tutorials.git
-cd beginner_tutorials
-mkdir build
-cd build
-cmake ..
-make
-```
-Now, to run this code, three terminals are required.
-
-Set environment vairables and run roscore in Terminal 1:
-```
-roscore
-```
-Set environment variables and run publisher (talker) node in Terminal 2:
-```
-cd <path to directory>
-./build/devel/lib/beginner_tutorials/talker
-```
-Set environment variables and run subscriber (listener) node in Terminal 3:
-```
-cd <path to directory>
-./build/devel/lib/beginner_tutorials/listener
 ```
 
 ## Plugins
