@@ -52,6 +52,7 @@ bool editStr(beginner_tutorials::changeString::Request &req,
              beginner_tutorials::changeString::Response &res) {
   res.str = req.str;
   str = res.str;
+  ROS_INFO_STREAM("Changed the string to be published before the message count due to service call");
   return true;
 }
 
@@ -75,7 +76,6 @@ int main(int argc, char **argv) {
    * part of the ROS system.
    */
   ros::init(argc, argv, "talker");
-  ROS_DEBUG_STREAM_ONCE("ROS has been initialized.");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.
@@ -104,10 +104,23 @@ int main(int argc, char **argv) {
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
   // Define service calls
-  ros::ServiceServer srvStr = n.advertiseService("editString", editStr);
+  ros::ServiceServer srv = n.advertiseService("editString", editStr);
 
   // Define the frequency of publishing the message
-  ros::Rate loop_rate(10);
+  double f = 10.0;
+  if (argc > 1) {
+    std::string::size_type sz;
+    double freq = std::stod(argv[1], &sz);
+    // Warning if the frequency is less than 0
+    if (freq <= 0) {
+      ROS_ERROR_STREAM("Frequency need to be positive. Frequency kept at default of 10 Hz.");
+    } else {
+      f = freq;
+    }
+  }
+
+  // Set frequency
+  ros::Rate loop_rate(f);
 
   /**
    * A count of how many messages we have sent. This is used to create a
@@ -116,8 +129,6 @@ int main(int argc, char **argv) {
    */
   int count = 0;
   while (ros::ok()) {
-    
-    ROS_DEBUG_STREAM_ONCE("ROS is running correctly.");
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
@@ -136,16 +147,6 @@ int main(int argc, char **argv) {
     chatter_pub.publish(msg);
 
     ros::spinOnce();
-
-    // The following condition included to get some difference in logging levels.
-    if (count == 5) {
-      ROS_WARN_STREAM("Reached half way -> 5 messages published.");
-    } else if (count == 9) {
-      ROS_ERROR_STREAM("Only 1 message left to be published.");
-    } else if (count == 10) {
-      ROS_FATAL_STREAM("10 messages published -> Stop Publishing.");
-      break;
-    }
 
     loop_rate.sleep();
     ++count;
