@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
    * part of the ROS system.
    */
   ros::init(argc, argv, "talker");
+  ROS_DEBUG_STREAM_ONCE("ROS has been initialized.");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.
@@ -109,20 +110,21 @@ int main(int argc, char **argv) {
   ros::Rate loop_rate(10);
 
   /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
+   * A count of how many messages we have sent. This is used to create a
+   * unique string for each message and stop publishing when 10 messages
+   * are published.
    */
   int count = 0;
   while (ros::ok()) {
+    
+    ROS_DEBUG_STREAM_ONCE("ROS is running correctly.");
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
     std_msgs::String msg;
-
     std::stringstream ss;
     ss << str << count;
     msg.data = ss.str();
-
     ROS_INFO("%s", msg.data.c_str());
 
     /**
@@ -134,6 +136,16 @@ int main(int argc, char **argv) {
     chatter_pub.publish(msg);
 
     ros::spinOnce();
+
+    // The following condition included to get some difference in logging levels.
+    if (count == 5) {
+      ROS_WARN_STREAM("Reached half way -> 5 messages published.");
+    } else if (count == 9) {
+      ROS_ERROR_STREAM("Only 1 message left to be published.");
+    } else if (count == 10) {
+      ROS_FATAL_STREAM("10 messages published -> Stop Publishing.");
+      break;
+    }
 
     loop_rate.sleep();
     ++count;
