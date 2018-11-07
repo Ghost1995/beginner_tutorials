@@ -52,7 +52,8 @@ bool editStr(beginner_tutorials::changeString::Request &req,
              beginner_tutorials::changeString::Response &res) {
   res.str = req.str;
   str = res.str;
-  ROS_INFO_STREAM("Changed the string to be published before the message count due to service call");
+  ROS_INFO_STREAM("Changed the string to be published before the message count"
+                  " due to service call");
   return true;
 }
 
@@ -113,7 +114,8 @@ int main(int argc, char **argv) {
     double freq = std::stod(argv[1], &sz);
     // Warning if the frequency is less than 0
     if (freq <= 0) {
-      ROS_ERROR_STREAM("Frequency need to be positive. Frequency kept at default of 10 Hz.");
+      ROS_ERROR_STREAM("Frequency need to be positive. Frequency kept at"
+                       " default of 10 Hz.");
     } else {
       f = freq;
     }
