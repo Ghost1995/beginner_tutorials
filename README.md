@@ -48,7 +48,7 @@ roslaunch beginner_tutorials nodes.launch
 After following the build instructions, launch the code with frequency as argument:
 ```
 source ~/catkin_ws/devel/setup.bash
-roslaunch beginner_tutorials nodes.launch f:=<desired_frequency>
+roslaunch beginner_tutorials nodes.launch f:=<userFrequency>
 ```
 
 ### 2) Run each node separately
@@ -76,7 +76,7 @@ rosrun beginner_tutorials listener
 After running the code by following either one of the run instructions, both the talker and listener nodes will be active. Now, open a new terminal and start the service:
 ```
 source ~/catkin_ws/devel/setup.bash
-rosservice call /editString "input: '<any_string>'"
+rosservice call /editString "input: '<inputString>'"
 ``` 
 
 ## Plugins
