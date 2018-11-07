@@ -35,6 +35,25 @@
 #include <sstream>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "beginner_tutorials/changeString.h"
+
+// define a global variable to be able to call the callback function
+extern std::string str = "The count is: ";
+
+/**
+ * @brief A call back function which changes the string being published
+ * 
+ * @param The first parameter is the request to the service
+ * @param The second parameter is the response of the service
+ * 
+ * @return The output is a boolean which is true if there were no errors
+ */
+bool editStr(beginner_tutorials::changeString::Request &req,
+             beginner_tutorials::changeString::Response &res) {
+  res.str = req.str;
+  str = res.str;
+  return true;
+}
 
 /**
  * @brief It is the main function. The program demonstrates simple sending of messages over the ROS system.
@@ -83,6 +102,10 @@ int main(int argc, char **argv) {
    */
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
+  // Define service calls
+  ros::ServiceServer srvStr = n.advertiseService("editString", editStr);
+
+  // Define the frequency of publishing the message
   ros::Rate loop_rate(10);
 
   /**
@@ -97,7 +120,7 @@ int main(int argc, char **argv) {
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "You are listening to the Talker - " << count;
+    ss << str << count;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
