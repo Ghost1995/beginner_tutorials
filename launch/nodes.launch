@@ -1,0 +1,17 @@
+<launch>
+  <arg name = "f" default = "10.0"/>
+  <node
+    name = "publisher"
+    pkg = "beginner_tutorials"
+    type = "talker"
+    output = "screen"
+    args = "$(arg f)"
+  />
+  <node
+    name = "subscriber"
+    pkg = "beginner_tutorials"
+    type = "listener"
+    output = "screen"
+    launch-prefix = "gnome-terminal -e"
+   />
+</launch>
