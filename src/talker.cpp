@@ -35,6 +35,27 @@
 #include <sstream>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "beginner_tutorials/changeString.h"
+
+// define a global variable to be able to call the callback function
+extern std::string str = "The count is: ";
+
+/**
+ * @brief A call back function which changes the string being published
+ * 
+ * @param The first parameter is the request to the service
+ * @param The second parameter is the response of the service
+ * 
+ * @return The output is a boolean which is true if there were no errors
+ */
+bool editStr(beginner_tutorials::changeString::Request &req,
+             beginner_tutorials::changeString::Response &res) {
+  res.str = req.str;
+  str = res.str;
+  ROS_INFO_STREAM("Changed the string to be published before the message count"
+                  " due to service call");
+  return true;
+}
 
 /**
  * @brief It is the main function. The program demonstrates simple sending of messages over the ROS system.
@@ -83,11 +104,30 @@ int main(int argc, char **argv) {
    */
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
-  ros::Rate loop_rate(10);
+  // Define service calls
+  ros::ServiceServer srv = n.advertiseService("editString", editStr);
+
+  // Define the frequency of publishing the message
+  double f = 10.0;
+  if (argc > 1) {
+    std::string::size_type sz;
+    double freq = std::stod(argv[1], &sz);
+    // Warning if the frequency is less than 0
+    if (freq <= 0) {
+      ROS_ERROR_STREAM("Frequency need to be positive. Frequency kept at"
+                       " default of 10 Hz.");
+    } else {
+      f = freq;
+    }
+  }
+
+  // Set frequency
+  ros::Rate loop_rate(f);
 
   /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
+   * A count of how many messages we have sent. This is used to create a
+   * unique string for each message and stop publishing when 10 messages
+   * are published.
    */
   int count = 0;
   while (ros::ok()) {
@@ -95,11 +135,9 @@ int main(int argc, char **argv) {
      * This is a message object. You stuff it with data, and then publish it.
      */
     std_msgs::String msg;
-
     std::stringstream ss;
-    ss << "You are listening to the Talker - " << count;
+    ss << str << count;
     msg.data = ss.str();
-
     ROS_INFO("%s", msg.data.c_str());
 
     /**
