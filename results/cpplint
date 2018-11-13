@@ -1,5 +1,10 @@
-./src/talker.cpp:51:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::changeString::Request &req  [runtime/references] [2]
-./src/talker.cpp:52:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::changeString::Response &res  [runtime/references] [2]
+./src/talker.cpp:58:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::changeString::Request &req  [runtime/references] [2]
+./src/talker.cpp:59:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::changeString::Response &res  [runtime/references] [2]
+./src/talker.cpp:81:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::setMaxCount::Request &req  [runtime/references] [2]
+./src/talker.cpp:82:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::setMaxCount::Response &res  [runtime/references] [2]
 Done processing ./src/talker.cpp
 Done processing ./src/listener.cpp
-Total errors found: 2
+Done processing ./test/testTalker.cpp
+Done processing ./test/main.cpp
+Total errors found: 4
+

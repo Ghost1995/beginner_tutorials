@@ -42,12 +42,12 @@
 * @brief main function which runs all test results.
 */
 int main(int argc, char** argv) {
-	// Initialize a ROS node
-    ros::init(argc, argv, "allTests");
+  // Initialize a ROS node
+  ros::init(argc, argv, "allTests");
 
-    // Initialize Google Test
-    ::testing::InitGoogleTest(&argc, argv);
-  
-    // Run all tests
-    return RUN_ALL_TESTS();
+  // Initialize Google Test
+  ::testing::InitGoogleTest(&argc, argv);
+
+  // Run all tests
+  return RUN_ALL_TESTS();
 }

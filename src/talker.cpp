@@ -37,13 +37,15 @@
  * @brief Implementing publisher node
  */
 
-#include <sstream>
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <std_msgs/String.h>
+#include <sstream>
 #include "beginner_tutorials/changeString.h"
 #include "beginner_tutorials/setMaxCount.h"
-#include "initializeGlobalVars.h"
+
+extern std::string str = "The count is: ";
+int maxCount = 0;
 
 /**
  * @brief A call back function which changes the string being published
@@ -163,7 +165,7 @@ int main(int argc, char **argv) {
   // Initialize tf variables
   tf::TransformBroadcaster br;
   tf::Transform transform;
-  
+
   /**
    * A count of how many messages we have sent. This is used to create a
    * unique string for each message.
@@ -211,7 +213,7 @@ int main(int argc, char **argv) {
         ROS_WARN_STREAM(count << " messages have been published.");
         ROS_INFO_STREAM("Closing the talker and listener.");
         system("rosnode kill /listener");
-        system("rosnode kill /talker");
+        system("rosnode kill /publisher");
         break;
       }
     }

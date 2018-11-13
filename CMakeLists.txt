@@ -20,7 +20,7 @@ generate_messages(DEPENDENCIES std_msgs)
 catkin_package(CATKIN_DEPENDS message_runtime)
 
 ## Specify locations of header files
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ executable
 add_executable(talker src/talker.cpp)
