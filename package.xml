@@ -69,6 +69,8 @@
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>tf</exec_depend>
 
+  <test_depend>rosunit</test_depend>
+  <test_depend>gtest</test_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -20,7 +20,7 @@ generate_messages(DEPENDENCIES std_msgs)
 catkin_package(CATKIN_DEPENDS message_runtime)
 
 ## Specify locations of header files
-include_directories(${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ executable
 add_executable(talker src/talker.cpp)
@@ -33,4 +33,11 @@ target_link_libraries(listener ${catkin_LIBRARIES})
 ## Specify dependencies to link a library or executable target against
 add_dependencies(talker beginner_tutorials_generate_messages_cpp)
 add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  
+  add_rostest_gtest(allTests test/allTests.test test/main.cpp test/testTalker.cpp)
+  target_link_libraries(allTests ${catkin_LIBRARIES})
+endif()
 
