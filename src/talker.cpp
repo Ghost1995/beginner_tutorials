@@ -36,9 +36,11 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "beginner_tutorials/changeString.h"
+#include "beginner_tutorials/setMaxCount.h"
 
-// define a global variable to be able to call the callback function
+// Define global variables to be able to call the callback function
 extern std::string str = "The count is: ";
+extern int maxCount = 0;
 
 /**
  * @brief A call back function which changes the string being published
@@ -48,12 +50,39 @@ extern std::string str = "The count is: ";
  * 
  * @return The output is a boolean which is true if there were no errors
  */
-bool editStr(beginner_tutorials::changeString::Request &req,
-             beginner_tutorials::changeString::Response &res) {
+bool editString(beginner_tutorials::changeString::Request &req,
+                beginner_tutorials::changeString::Response &res) {
   res.str = req.str;
   str = res.str;
-  ROS_INFO_STREAM("Changed the string to be published before the message count"
-                  " due to service call");
+  if (str.length() < 1) {
+    ROS_ERROR_STREAM("The string should contain at least 1 character.");
+    str = "The count is: ";
+    ROS_INFO_STREAM("String to be published has not been modified.");
+  } else {
+    ROS_INFO_STREAM("String to be published has been modified.");
+  }
+  return true;
+}
+
+/**
+ * @brief A call back function which sets the maximum number of messages to be published
+ * 
+ * @param The first parameter is the request to the service
+ * @param The second parameter is the response of the service
+ * 
+ * @return The output is a boolean which is true if there were no errors
+ */
+bool setCount(beginner_tutorials::setMaxCount::Request &req,
+              beginner_tutorials::setMaxCount::Response &res) {
+  res.count = req.count;
+  maxCount = res.count;
+  if (maxCount < 1) {
+    ROS_ERROR_STREAM("The maximum count should be greater than 0.");
+    maxCount = 0;
+    ROS_INFO_STREAM("Maximum count of messages to be published has not been set.");
+  } else {
+    ROS_INFO_STREAM("Maximum count of messages to be published has been set.");
+  }
   return true;
 }
 
@@ -105,19 +134,21 @@ int main(int argc, char **argv) {
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
   // Define service calls
-  ros::ServiceServer srv = n.advertiseService("editString", editStr);
+  ros::ServiceServer srvStr = n.advertiseService("editString", editString);
+  ros::ServiceServer srvCount = n.advertiseService("setCount", setCount);
 
   // Define the frequency of publishing the message
   double f = 10.0;
   if (argc > 1) {
     std::string::size_type sz;
-    double freq = std::stod(argv[1], &sz);
+    f = std::stod(argv[1], &sz);
     // Warning if the frequency is less than 0
-    if (freq <= 0) {
-      ROS_ERROR_STREAM("Frequency need to be positive. Frequency kept at"
-                       " default of 10 Hz.");
+    if (f <= 0) {
+      ROS_ERROR_STREAM("Frequency need to be greater than 0.");
+      f = 10.0;
+      ROS_INFO_STREAM("Frequency of publishing is set as 10 Hz.");
     } else {
-      f = freq;
+      ROS_INFO_STREAM("Frequency of publishing is set as " << f << " Hz.");
     }
   }
 
@@ -126,8 +157,7 @@ int main(int argc, char **argv) {
 
   /**
    * A count of how many messages we have sent. This is used to create a
-   * unique string for each message and stop publishing when 10 messages
-   * are published.
+   * unique string for each message.
    */
   int count = 0;
   while (ros::ok()) {
@@ -147,8 +177,22 @@ int main(int argc, char **argv) {
      * in the constructor above.
      */
     chatter_pub.publish(msg);
-
     ros::spinOnce();
+
+    // Check if maximum count of messages has reached
+    if (maxCount > 0) {
+      if ((maxCount%2 == 0)&&(count == maxCount/2)) {
+        ROS_WARN_STREAM("Only " << count << " messages left to be published.");
+      } else if ((maxCount%2 == 1)&&(count == (maxCount-1)/2)) {
+        ROS_WARN_STREAM("Only " << count+1 << " messages left to be published.");
+      } else if (maxCount == count) {
+        ROS_WARN_STREAM(count << " messages have been published.");
+        ROS_INFO_STREAM("Closing the talker and listener.");
+        system("rosnode kill /listener");
+        system("rosnode kill /talker");
+        break;
+      }
+    }
 
     loop_rate.sleep();
     ++count;

@@ -1,0 +1,5 @@
+# Request to Service
+int64 count
+---
+# Response of Service
+int64 count

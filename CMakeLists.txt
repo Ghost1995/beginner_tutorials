@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation
 roslaunch_add_file_check(launch)
 
 ## Specify locations of service files
-add_service_files(FILES changeString.srv)
+add_service_files(FILES changeString.srv setMaxCount.srv)
 
 ## Generate services with dependencies
 generate_messages(DEPENDENCIES std_msgs)
@@ -33,3 +33,4 @@ target_link_libraries(listener ${catkin_LIBRARIES})
 ## Specify dependencies to link a library or executable target against
 add_dependencies(talker beginner_tutorials_generate_messages_cpp)
 add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+
