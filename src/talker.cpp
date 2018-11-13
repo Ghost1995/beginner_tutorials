@@ -1,30 +1,35 @@
-/*
- * Copyright (C) 2008, Morgan Quigley and Willow Garage, Inc.
- *
+/**
+ * BSD 3-Clause License
+ * 
+ * Copyright (c) 2018, Ashwin Goyal
+ * All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *   * Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *   * Neither the names of Stanford University or Willow Garage, Inc. nor the names of its
- *     contributors may be used to endorse or promote products derived from
- *     this software without specific prior written permission.
- *
+ * 
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * 
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ * 
+ * * Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- /**
+/**
  * @file talker.cpp
  * @author Ashwin Goyal [Ghost1995]
  * @copyright 2018 BSD License
@@ -32,16 +37,13 @@
  * @brief Implementing publisher node
  */
 
-#include "sstream"
-#include "ros/ros.h"
-#include "tf/transform_broadcaster.h"
-#include "std_msgs/String.h"
+#include <sstream>
+#include <ros/ros.h>
+#include <tf/transform_broadcaster.h>
+#include <std_msgs/String.h>
 #include "beginner_tutorials/changeString.h"
 #include "beginner_tutorials/setMaxCount.h"
-
-// Define global variables to be able to call the callback function
-extern std::string str = "The count is: ";
-extern int maxCount = 0;
+#include "initializeGlobalVars.h"
 
 /**
  * @brief A call back function which changes the string being published
@@ -66,7 +68,8 @@ bool editString(beginner_tutorials::changeString::Request &req,
 }
 
 /**
- * @brief A call back function which sets the maximum number of messages to be published
+ * @brief A call back function which sets the maximum number of messages to be
+ *        published
  * 
  * @param The first parameter is the request to the service
  * @param The second parameter is the response of the service
@@ -80,7 +83,7 @@ bool setCount(beginner_tutorials::setMaxCount::Request &req,
   if (maxCount < 1) {
     ROS_ERROR_STREAM("The maximum count should be greater than 0.");
     maxCount = 0;
-    ROS_INFO_STREAM("Maximum count of messages to be published has not been set.");
+    ROS_INFO_STREAM("Maximum count of messages to be published not set.");
   } else {
     ROS_INFO_STREAM("Maximum count of messages to be published has been set.");
   }
@@ -88,7 +91,8 @@ bool setCount(beginner_tutorials::setMaxCount::Request &req,
 }
 
 /**
- * @brief It is the main function. The program demonstrates simple sending of messages over the ROS system.
+ * @brief It is the main function. The program demonstrates simple sending of
+ *        messages over the ROS system.
  *
  * @param First parameter is the number of inputs
  * @param Second parameter is the input
@@ -184,13 +188,16 @@ int main(int argc, char **argv) {
     chatter_pub.publish(msg);
 
     // Set translation vector
-    transform.setOrigin(tf::Vector3(sin(ros::Time::now().toSec()), cos(ros::Time::now().toSec()), tan(ros::Time::now().toSec())));
+    transform.setOrigin(tf::Vector3(sin(ros::Time::now().toSec()),
+                cos(ros::Time::now().toSec()), tan(ros::Time::now().toSec())));
     // Set orientation vector
     tf::Quaternion q;
     q.setRPY(count, -count, count);
+    q.normalize();
     transform.setRotation(q);
     // Broadcast the transform
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "talk"));
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world",
+                                          "talk"));
 
     ros::spinOnce();
 
@@ -199,8 +206,8 @@ int main(int argc, char **argv) {
       if ((maxCount%2 == 0)&&(count == maxCount/2)) {
         ROS_WARN_STREAM("Only " << count << " messages left to be published.");
       } else if ((maxCount%2 == 1)&&(count == (maxCount-1)/2)) {
-        ROS_WARN_STREAM("Only " << count+1 << " messages left to be published.");
-      } else if (maxCount == count) {
+        ROS_WARN_STREAM("Only " << count+1 << " messages left to publish.");
+      } else if (maxCount <= count) {
         ROS_WARN_STREAM(count << " messages have been published.");
         ROS_INFO_STREAM("Closing the talker and listener.");
         system("rosnode kill /listener");
