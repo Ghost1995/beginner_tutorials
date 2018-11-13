@@ -5,7 +5,7 @@ project(beginner_tutorials)
 add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation roslaunch)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs message_generation roslaunch tf)
 
 ## Check launch files
 roslaunch_add_file_check(launch)

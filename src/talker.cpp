@@ -32,8 +32,9 @@
  * @brief Implementing publisher node
  */
 
-#include <sstream>
+#include "sstream"
 #include "ros/ros.h"
+#include "tf/transform_broadcaster.h"
 #include "std_msgs/String.h"
 #include "beginner_tutorials/changeString.h"
 #include "beginner_tutorials/setMaxCount.h"
@@ -155,6 +156,10 @@ int main(int argc, char **argv) {
   // Set frequency
   ros::Rate loop_rate(f);
 
+  // Initialize tf variables
+  tf::TransformBroadcaster br;
+  tf::Transform transform;
+  
   /**
    * A count of how many messages we have sent. This is used to create a
    * unique string for each message.
@@ -177,6 +182,16 @@ int main(int argc, char **argv) {
      * in the constructor above.
      */
     chatter_pub.publish(msg);
+
+    // Set translation vector
+    transform.setOrigin(tf::Vector3(sin(ros::Time::now().toSec()), cos(ros::Time::now().toSec()), tan(ros::Time::now().toSec())));
+    // Set orientation vector
+    tf::Quaternion q;
+    q.setRPY(count, -count, count);
+    transform.setRotation(q);
+    // Broadcast the transform
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "talk"));
+
     ros::spinOnce();
 
     // Check if maximum count of messages has reached
