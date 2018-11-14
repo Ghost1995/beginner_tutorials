@@ -52,8 +52,7 @@ TEST(TalketTest, testStringService) {
 
   // Create a service object for service editString
   ros::service::waitForService("editString");
-  ros::ServiceClient client = n.serviceClient<beginner_tutorials::changeString>
-                                                                ("editString");
+  auto clnt = n.serviceClient<beginner_tutorials::changeString>("editString");
 
   // Create an object of editString
   beginner_tutorials::changeString srv;
@@ -62,7 +61,7 @@ TEST(TalketTest, testStringService) {
   srv.request.str = "The new count is: ";
 
   // Check if the service call worked properly
-  EXPECT_TRUE(client.call(srv));
+  EXPECT_TRUE(clnt.call(srv));
 
   // Compare the input and output string of the service
   EXPECT_STREQ("The new count is: ", srv.response.str.c_str());
@@ -78,8 +77,7 @@ TEST(TalketTest, testCountService) {
 
   // Create a service object for service setCount
   ros::service::waitForService("setCount");
-  ros::ServiceClient client = n.serviceClient<beginner_tutorials::setMaxCount>
-                                                                 ("setCount");
+  auto client = n.serviceClient<beginner_tutorials::setMaxCount>("setCount");
 
   // Create an object of setCount
   beginner_tutorials::setMaxCount srv;
@@ -111,7 +109,7 @@ TEST(TalketTest, testBroadcaster) {
   listener.lookupTransform("/world", "/talk", ros::Time(0), transform);
 
   // Check the position
-  tf::Vector3 pos = transform.getOrigin();
+  auto pos = transform.getOrigin();
   EXPECT_LE(pos.x(), 1);
   EXPECT_LE(pos.y(), 1);
   EXPECT_GE(pos.x(), -1);

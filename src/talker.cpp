@@ -138,11 +138,11 @@ int main(int argc, char **argv) {
    * than we can send them, the number here specifies how many messages to
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  auto chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
 
   // Define service calls
-  ros::ServiceServer srvStr = n.advertiseService("editString", editString);
-  ros::ServiceServer srvCount = n.advertiseService("setCount", setCount);
+  auto srvStr = n.advertiseService("editString", editString);
+  auto srvCount = n.advertiseService("setCount", setCount);
 
   // Define the frequency of publishing the message
   double f = 10.0;
