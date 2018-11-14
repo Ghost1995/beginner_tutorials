@@ -22,14 +22,20 @@ cd ~/catkin_ws/
 catkin_make
 source devel/setup.bash
 cd src/
-git clone -b Week10_HW --single-branch https://github.com/Ghost1995/beginner_tutorials.git
+git clone -b Week11_HW --single-branch https://github.com/Ghost1995/beginner_tutorials.git
 cd ..
 catkin_make
-source devel/setup.bash
 ```
-Note, that if you do not have a catkin workspace, then first make the catkin workspace using the following command:
+Note, that if you do not have a catkin workspace, then to build this code use the following commands:
 ```
 mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+source devel/setup.bash
+cd src/
+git clone -b Week11_HW --single-branch https://github.com/Ghost1995/beginner_tutorials.git
+cd ..
+catkin_make
 ```
 
 ## Run Instructions
@@ -48,7 +54,7 @@ roslaunch beginner_tutorials nodes.launch
 After following the build instructions, launch the code with frequency as argument:
 ```
 source ~/catkin_ws/devel/setup.bash
-roslaunch beginner_tutorials nodes.launch f:=<userFrequency>
+roslaunch beginner_tutorials nodes.launch f:=<desiredFrequency>
 ```
 
 ### 2) Run each node separately
@@ -74,21 +80,117 @@ rosrun beginner_tutorials listener
 ## Use ROS Service
 
 After running the code by following either one of the run instructions, both the talker and listener nodes will be active. Now, open a new terminal and start the service:
+
+### 1) Run the Service to Edit the Base Output String
+
 ```
 source ~/catkin_ws/devel/setup.bash
-rosservice call /editString "input: '<inputString>'"
+rosservice call /editString "str: '<desiredString>'"
 ``` 
+
+### 2) Run the Service to Set the Maximum Strings to be Published
+
+```
+source ~/catkin_ws/devel/setup.bash
+rosservice call /setMaxCount "count: <desiredMaximumCount>"
+``` 
+
+## View the tf Frames
+
+The tf broadcaster in the talker node creates a tf transform between the "world" frame and the "talk" frame as shown in the attached [PDF](https://github.com/Ghost1995/beginner_tutorials/blob/Week11_HW/results/view_frames%20result.pdf). This is a time varying broadcaster with both the translation and rotation varying with time. It can be viewed by using "tf_echo".
+
+After running the code by following either one of the run instructions, both the talker and listener nodes will be active. Note that, listener node is not required for viewing tf frames.
+
+Now, open a new terminal and use the following commands to view the tf frames in the command window:
+```
+source ~/catkin_ws/devel/setup.bash
+rosrun tf tf_echo /world /talk
+```
+To visualize the tf frames in a graph form, run the following commands:
+```
+source ~/catkin_ws/devel/setup.bash
+rosrun rqt_tf_tree rqt_tf_tree 
+```
+To generate the PDF showing the broadcaster architecture, run the following commands:
+```
+source ~/catkin_ws/devel/setup.bash
+rosrun tf view_frames
+```
+The above command generates a PDF file. To view this PDF generated from the command window, run the following command:
+```
+evince frames.pdf
+```
+
+## Run Tests
+
+There are 3 tests written for the talker node and added in the test directory. The first two tests check if the services being called are working correctly and the third one checks if the broadcaster in the talker node is working as expected. The tests created use rostest and gtest as base.
+
+### 1) Run the Tests while Compiling the Code
+
+You can run the tests while building the code by running the following commands:
+```
+cd ~/catkin_ws
+catkin_make run_tests_beginner_tutorials
+```
+
+### 2) Run the Tests after Compiling the Code
+
+After compiling the code by following the build instructions, to run the tests independently, use the following commands:
+```
+source ~/catkin_ws/devel/setup.bash
+rostest beginner_tutorials allTests.test
+```
+
+### 3) Run the Tests after Running the Code
+
+After running the code by following either one of the run instructions, both the talker and listener nodes will be active. Note that, similar to viewing the tf frames, listener node is not required for running the tests.
+
+Now, open a new terminal and use the following commands to run the tests:
+```
+source ~/catkin_ws/devel/setup.bash
+rosrun beginner_tutorials allTests
+```
+
+## Record bag File
+
+A ros bag file records all the topic and messages being published in the terminal. To record a bag file, just enable recording in the launch file using the following commands:
+```
+source ~/catkin_ws/devel/setup.bash
+roslaunch beginner_tutorials nodes.launch record:=enable
+```
+Note that, the bag file is saved in the results folder by default.
+
+### Inspecting the bag File Generated
+
+To get more information about the generated rosbag file, such as the data being recorded, the time duration, the size of the bag file, and so on, use the following commands:
+```
+cd <path to directory>/results
+rosbag info record.bag
+```
+
+### Playing the bag File Generated
+
+The rosbag file records all the messages being published on to the terminal. To check if the messages were recorded properly, you can playback the recorded rosbag file.
+
+After running the code by following either one of the run instructions, both the talker and listener nodes will be active. Note that, close the talker node if it is running, otherwise the listener node will be echoing the data from both the talker node and the rosbag file.
+
+Now, open a new terminal and use the following commands:
+```
+cd <path to directory>/results
+rosbag play record.bag
+```
+The listener node will echo all the messages being published on topic /chatter.
 
 ## Plugins
 ##### CppChEclipse
 To run cppcheck in Terminal
 ```
 cd <path to directory>
-cppcheck --std=c++11 $(find . -name \*.cpp -or -name \*.srv | grep -vE -e "^./build/" -e "^./results/")
+cppcheck --enable=all --std=c++11 --suppress=* $(find . -name *.cpp -or -name *.hpp)
 ```
 ##### Google C++ Sytle
 To check Google C++ Style formatting in Terminal
 ```
 cd <path to directory>
-cpplint $(find . -name \*.cpp | grep -vE -e "^./build/" -e "^./results")
+cpplint $(find . -name *.cpp -or -name *.hpp)
 ```
